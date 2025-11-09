@@ -31,7 +31,12 @@ async function run() {
 
     // // Get => Find all Issues
     app.get("/issues", async (req, res) => {
-      const result = await issuesCollection.find().toArray();
+      const email = req.query.email;
+      const query = {};
+      if (email) {
+        query.email = email;
+      }
+      const result = await issuesCollection.find(query).toArray();
       res.send(result);
     });
 
@@ -75,6 +80,15 @@ async function run() {
       res.send(result);
     });
 
+    // Delete Issues
+    app.delete("/issues/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await issuesCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    //------------------
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
