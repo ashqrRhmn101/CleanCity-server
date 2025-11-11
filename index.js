@@ -28,6 +28,7 @@ async function run() {
 
     const db = client.db("CleanCity");
     const issuesCollection = db.collection("issues");
+    const contributionCollection = db.collection("contribution");
 
     // // Get => Find all Issues
     app.get("/issues", async (req, res) => {
@@ -85,6 +86,36 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await issuesCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // contributions related apis >
+    // get by email
+
+    app.get("/contribution", async (req, res) => {
+      const email = req.query.email;
+      const query = {};
+      if (email) {
+        query.email = email;
+      }
+      const cursor = contributionCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // create post
+    app.post("/contribution", async (req, res) => {
+      const newContribution = req.body;
+      const result = await contributionCollection.insertOne(newContribution);
+      res.send(result);
+    });
+
+    // contributions issues get by id
+    app.get("/issues/contribution/:_id", async (req, res) => {
+      const _id = req.params._id;
+      const query = { issueId: _id };
+      const cursor = contributionCollection.find(query).sort({ amount: -1 });
+      const result = await cursor.toArray();
       res.send(result);
     });
 
