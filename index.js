@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+require("dotenv").config();
 
 // middleware
 app.use(cors());
@@ -12,8 +13,7 @@ app.get("/", (req, res) => {
   res.send("CleanCity server is running...");
 });
 
-const uri =
-  "mongodb+srv://CleanCity:lWfkQpXgrmIxP9P6@cluster0.yaijel2.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.yaijel2.mongodb.net/?appName=Cluster0`;
 
 const client = new MongoClient(uri, {
   serverApi: {
